@@ -1,48 +1,100 @@
 // in context file we save all the common variables and state variables
 
-import { createContext, useState, useEffect  } from "react";
-import { products } from "../assets/assets";
+import { createContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
+export const shopContext = createContext();
 
-
-// shopContext = Context Object
-// console.log(shopContext);
-// Output: { Provider: Component, Consumer: Component, _currentValue: undefined }
-export const shopContext = createContext(); // This just creates an empty context "box"
-
-//this fills data in the container
 const ShopContextProvider = (props) => {
   const currancy = "$";
-  const delivery_fees = 10; // delivery fees 10$
+  const delivery_fees = 10;
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [products, setProducts] = useState([]);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
   const navigate = useNavigate();
 
-  // size -> shirt size(S,M,L etc )
+  // Function to load cart data from backend
+  const getUserCartData = async (userToken) => {
+    try {
+      const response = await axios.post(
+        backendUrl + "/api/cart/get",
+        {},
+        { headers: { token: userToken } }
+      );
+
+      if (response.data.success) {
+        setCartItems(response.data.cartData);
+        // console.log(
+        //   "✅ Cart data loaded from backend:",
+        //   response.data.cartData
+        // );
+        
+      }
+    } catch (error) {
+      console.log("Error loading cart:", error);
+    }
+  };
+
   const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Kindely Select Your Size First");
       return;
     }
 
-    let cartData = structuredClone(cartItems); // cpy of cart items
+    // console.log("🔥 addToCart called with:", { itemId, size });
+    // console.log("🔥 Token exists?", !!token, "Value:", token);
+
+    let cartData = structuredClone(cartItems);
     if (cartData[itemId]) {
       if (cartData[itemId][size]) {
-        cartData[itemId][size] += 1; // update existing entry
+        cartData[itemId][size] += 1;
       } else {
-        cartData[itemId][size] = 1; // create new entry
+        cartData[itemId][size] = 1;
       }
     } else {
-      cartData[itemId] = {}; // new entry
+      cartData[itemId] = {};
       cartData[itemId][size] = 1;
     }
     setCartItems(cartData);
+
+    // console.log("🔥 About to check token...");
+
+    if (token) {
+      // console.log("🔥 Token found, making API call...");
+      try {
+        // console.log("Sending to backend:", { itemId, size });
+        // console.log("Token:", token);
+
+        const response = await axios.post(
+          backendUrl + "/api/cart/add",
+          { itemId, size },
+          { headers: { token } }
+        );
+
+        // console.log("Backend response:", response.data);
+
+        if (response.data.success) {
+          toast.success("Added to cart");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.log("Error:", error);
+        console.log("Error response:", error.response?.data);
+        toast.error(error.response?.data?.message || error.message);
+      }
+    } else {
+      console.log("🔥 No token found - user not logged in?");
+    }
   };
 
-  const getCardCnt = () => {
+  const getCartCnt = () => {
     let totalCnt = 0;
 
     for (const items in cartItems) {
@@ -61,32 +113,66 @@ const ShopContextProvider = (props) => {
     let cartDataCpy = structuredClone(cartItems);
     cartDataCpy[itemId][size] = qty;
     setCartItems(cartDataCpy);
+
+    if (token) {
+      try {
+        await axios.post(
+          backendUrl + "/api/cart/update",
+          { itemId, size, quantity: qty },
+          { headers: { token } }
+        );
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
   };
 
- const getCardAmt = () => {
-   let totalAmt = 0;
+  const getCartAmt = () => {
+    let totalAmt = 0;
 
-   for (const productId in cartItems) {
-     // Find product info by id
-     const itemInfo = products.find((product) => product._id === productId);
-     if (!itemInfo) continue; // if product not found, skip
+    for (const productId in cartItems) {
+      const itemInfo = products.find((product) => product._id === productId);
+      if (!itemInfo) continue;
 
-     // Now loop over sizes for this product
-     for (const size in cartItems[productId]) {
-       const qty = cartItems[productId][size];
-       if (qty > 0) {
-         totalAmt += itemInfo.price * qty;
-       }
-     }
-   }
+      for (const size in cartItems[productId]) {
+        const qty = cartItems[productId][size];
+        if (qty > 0) {
+          totalAmt += itemInfo.price * qty;
+        }
+      }
+    }
 
-   return totalAmt;
- };
+    return totalAmt;
+  };
 
+  const getProductsData = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/api/product/listProduct`);
+      if (res.data.success) {
+        setProducts(res.data.products);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
 
-  // useEffect(() => {
-  //   console.log(cartItems);
-  // }, [cartItems]);
+  useEffect(() => {
+    getProductsData();
+  }, []);
+
+  // Load token and cart data on mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      getUserCartData(storedToken);
+      // console.log("✅ Token and cart data loaded from localStorage");
+    }
+  }, []);
 
   const value = {
     products,
@@ -98,25 +184,19 @@ const ShopContextProvider = (props) => {
     setShowSearch,
     cartItems,
     addToCart,
-    getCardCnt,
+    getCartCnt,
     updateQty,
-    getCardAmt,
+    getCartAmt,
     navigate,
+    backendUrl,
+    setToken,
+    token,
+    setCartItems,
   };
 
   return (
-    <shopContext.Provider value={value}>
-      {props.children}{" "}
-      {/* This becomes: <Header /><ProductList /><Cart /><Footer /> */}
-    </shopContext.Provider>
+    <shopContext.Provider value={value}>{props.children}</shopContext.Provider>
   );
 };
 
 export default ShopContextProvider;
-
-{
-  /* <shopContext.Provider> = Creates a data-sharing zone
-    value={value} = The data being shared
-    {children} = All components that can access that data
-    Any child can use useContext(shopContext) to get the data! */
-}

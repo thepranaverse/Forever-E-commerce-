@@ -1,7 +1,7 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Home from "./pages/Home"
-import Collection from "./pages/Collection"
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Collection from "./pages/Collection";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Products from "./pages/Products";
@@ -10,19 +10,18 @@ import Login from "./pages/Login";
 import PlaceOrder from "./pages/PlaceOrder";
 import Orders from "./pages/Orders";
 import NavBar from "./components/NavBar";
-import Footer from './components/Footer';
-import SearchBar from './components/SearchBar';
+import Footer from "./components/Footer";
+import SearchBar from "./components/SearchBar";
+import Verify from "./pages/verify";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'
-
-
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-
   return (
     <>
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
-        <ToastContainer/> {/* to add some notifications/pop-ups in our project */}
+        <ToastContainer />{" "}
+        {/* to add some notifications/pop-ups in our project */}
         <NavBar /> {/*navbar before Routes so it is visisble in all pages... */}
         <SearchBar />
         <Routes>
@@ -35,6 +34,7 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/place-order" element={<PlaceOrder />}></Route>
           <Route path="/orders" element={<Orders />}></Route>
+          <Route path="/verify" element={<Verify />}></Route>
         </Routes>
         <Footer />
       </div>
@@ -42,4 +42,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
