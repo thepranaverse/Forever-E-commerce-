@@ -12,7 +12,7 @@ import Orders from "./pages/Orders";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
-import Verify from "./pages/verify";
+import Verify from "./pages/Verify.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
