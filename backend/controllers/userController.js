@@ -47,8 +47,12 @@ const registerUser = async (req, res) => {
     if (!validator.isEmail(email)) {
       return res.json({ success: false, message: "Plz enter a valid Email" });
     }
-    if (!validator.isStrongPassword(pwd)) {
-      return res.json({ success: false, message: "set a Strong Password" });
+    // Make password validation less strict
+    if (pwd.length < 8) {
+      return res.json({
+        success: false,
+        message: "Password must be at least 8 characters long",
+      });
     }
     // hashing users password
     const salt = await bcrypt.genSalt(10);
@@ -75,14 +79,17 @@ const registerUser = async (req, res) => {
 // Route for admin login
 const adminLogin = async (req,res) => {
   try {
-    const { email, pwd } = req.body;
-    if (email === process.env.ADMIN_EMAIL && pwd === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign(email + pwd, process.env.JWT_SECRET);
+    const { email, password } = req.body;
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      const token = jwt.sign(email + password, process.env.JWT_SECRET);
       res.json({ success: true, token });
     }
     else {
       res.json({ success: false, message:"Invalid Credentials" });
     }
+    // console.log("Env:", process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD);
+    // console.log("Received:", email, password);
+
   } catch (error) {
     console.log("Register err", error);
     res.json({ success: false, message: error.message });

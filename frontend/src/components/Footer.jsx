@@ -33,7 +33,7 @@ const Footer = () => {
       <div className="col-span-full">
         <hr />
         <p className="py-5 text-sm text-center">
-          Copyright 2024@ greatstack.dev - All Right Reserved.
+          Copyright 2024@ Me_$Pranay.dev - All Right Reserved.
         </p>
       </div>
       

@@ -1,7 +1,6 @@
 // used for auth..
 import mongoose from "mongoose";
 
-
 // creating schema(properties of user)
 const userSchema = new mongoose.Schema(
   {
