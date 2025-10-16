@@ -5,7 +5,7 @@ import Title from "../components/Title";
 import ProductItems from "../components/ProductItems";
 
 const Collection = () => {
-  const { products ,search ,showSearch } = useContext(shopContext);
+  const { products, search, showSearch } = useContext(shopContext);
   // console.log(products);
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
@@ -36,10 +36,10 @@ const Collection = () => {
   const applyFilter = () => {
     let productsCopy = [...products]; // clone the products array
 
-    if (showSearch && search ) {
-       productsCopy = productsCopy.filter((item) =>
-         item.name.toLowerCase().includes(search.toLowerCase())
-       );
+    if (showSearch && search) {
+      productsCopy = productsCopy.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase())
+      );
     }
     // Filter by category
     if (category.length > 0) {
@@ -84,12 +84,11 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subCategory ,search ,showSearch ,products]);
+  }, [category, subCategory, search, showSearch, products]);
 
   useEffect(() => {
-    sortProduct()
-  }, [sortType])
-  
+    sortProduct();
+  }, [sortType]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
@@ -163,7 +162,7 @@ const Collection = () => {
               <input
                 className="w-3"
                 type="checkbox"
-                value={"Topwear"}
+                value={"Topware"}
                 onChange={toggleSubCategory}
               />
               Topwear
@@ -172,7 +171,7 @@ const Collection = () => {
               <input
                 className="w-3"
                 type="checkbox"
-                value={"Bottomwear"}
+                value={"Bottomware"}
                 onChange={toggleSubCategory}
               />
               Bottomwear
@@ -181,7 +180,7 @@ const Collection = () => {
               <input
                 className="w-3"
                 type="checkbox"
-                value={"Winterwear"}
+                value={"Winterware"}
                 onChange={toggleSubCategory}
               />
               Winterwear
