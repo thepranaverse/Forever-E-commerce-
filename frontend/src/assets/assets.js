@@ -351,7 +351,7 @@ export const products = [
     {
         _id: "aaaav",
         name: "Women Palazzo Pants with Waist Belt",
-        description: "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
+        description: "Women Palazzo Pants with Waist Beltd neckline and short sleeves, worn as an undershirt or outer garment.",
         price: 200,
         image: [p_img22],
         category: "Women",
