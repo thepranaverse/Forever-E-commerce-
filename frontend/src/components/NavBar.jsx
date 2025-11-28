@@ -39,10 +39,14 @@ const NavBar = () => {
             <p>CONTACT</p>
             <hr className=" border-none h-[1.5px] bg-gray-700 hidden" />
           </NavLink>
-          <NavLink to="/" className="flex flex-col item-center gap-1 border border-gray-500 px-1 py-1 rounded-2xl">
-            <p>Admin Pannel</p>
-            
-          </NavLink>
+          <a
+            href="https://forever-admin-tau-fawn.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1 border border-gray-500 px-3 py-1 rounded-xl hover:bg-gray-100 transition"
+          >
+            <p>Admin Panel</p>
+          </a>
         </ul>
 
         <div className="flex items-center gap-6">
@@ -128,6 +132,15 @@ const NavBar = () => {
               <Link to="/contact" onClick={() => setVisible(false)}>
                 Contact
               </Link>
+              <a
+                onClick={() => setVisible(false)}
+                href="https://forever-admin-tau-fawn.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1 border border-gray-500 px-3 py-1 rounded-xl hover:bg-gray-100 transition"
+              >
+                <p>Admin Panel</p>
+              </a>
             </nav>
           </div>
         </div>
